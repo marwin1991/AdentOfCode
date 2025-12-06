@@ -6,6 +6,10 @@ def read_file():
         return f.readlines()
 
 
+def split_n(s, n):
+    return [s[i:i + n] for i in range(0, len(s), n)]
+
+
 def main():
     lines = read_file()
     numbers = []
@@ -25,26 +29,49 @@ def main():
         else:
             operator_row = row
 
-    columns = list(zip(*numeric_rows))
+    max_len = max(len(line) for line in lines)
+    padded = [line.ljust(max_len) for line in lines[:-1]]
+
+    columns = [''.join(row[col] for row in padded) for col in range(max_len)]
+
+    problems = []
+    current = []
+
+    for col in columns:
+        if col.strip() == "":
+            if current:
+                problems.append(current)
+                current = []
+        else:
+            current.append(col)
+
+    if current:
+        problems.append(current)
 
     results = []
-    for col, op in zip(columns, operator_row):
+
+    for col, op in zip(problems, operator_row):
         if op == "+":
-            results.append(sum(col))
+            col_sum = 0
+            for n in col:
+                col_sum += int(n)
+            results.append(col_sum)
         elif op == "*":
             prod = 1
             for n in col:
-                prod *= n
+                prod *= int(n)
             results.append(prod)
         else:
             raise ValueError(f"Unknown operator: {op}")
 
-    total = 0
+    print(problems)
 
+    total = 0
     for r in results:
         total += r
 
     print("total:", total)
+
 
 if __name__ == '__main__':
     main()
