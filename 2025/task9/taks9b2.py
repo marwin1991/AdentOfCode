@@ -1,8 +1,6 @@
-from collections import deque
 from operator import itemgetter
 
-FILE_PATH = "input-test.txt"
-
+FILE_PATH = "input.txt"
 
 def read_file():
     with open(FILE_PATH) as f:
@@ -65,102 +63,7 @@ def connect_points(points):
     return segments
 
 import numpy as np
-
-def flood(h, w, grid):
-    q = deque()
-    visited = np.full((h, w), False, dtype=bool)
-
-    i = 0
-    for i in range(w):
-        q.append((0, i))
-        q.append((h - 1, i))
-    for i in range(h):
-        q.append((i, 0))
-        q.append((i, w - 1))
-    while q:
-        i+=1
-        y, x = q.popleft()
-        if x < 0 or x >= w or y < 0 or y >= h:
-            continue
-        if visited[y][x]:
-            continue
-        if grid[y][x] == True:
-            continue
-        visited[y][x] = True
-        q.append((y + 1, x))
-        q.append((y - 1, x))
-        q.append((y, x + 1))
-        q.append((y, x - 1))
-
-        if i % 1000000 == 0:
-            print(f"flooded iteration {i}/{w*h}")
-
-    return visited
-
-from numba import njit
-import numpy as np
 from collections import deque
-
-def flood3(grid):
-    h, w = grid.shape
-    visited = np.zeros((h, w), dtype=bool)
-    q = deque()
-
-    # add perimeter
-    for x in range(w):
-        if not grid[0, x]:
-            visited[0, x] = True
-            q.append((0, x))
-        if not grid[h-1, x]:
-            visited[h-1, x] = True
-            q.append((h-1, x))
-    for y in range(h):
-        if not grid[y, 0]:
-            visited[y, 0] = True
-            q.append((y, 0))
-        if not grid[y, w-1]:
-            visited[y, w-1] = True
-            q.append((y, w-1))
-
-    i = 0
-    while q:
-        i+=1
-        y, x = q.popleft()
-        for ny, nx in ((y+1,x),(y-1,x),(y,x+1),(y,x-1)):
-            if 0 <= ny < h and 0 <= nx < w:
-                if not grid[ny, nx] and not visited[ny, nx]:
-                    visited[ny, nx] = True   # mark before enqueue
-                    q.append((ny, nx))
-        if i % 1000000 == 0:
-            print(f"flooded iteration {i}/{w*h}")
-
-    return visited
-
-from scipy.ndimage import binary_dilation
-
-def flood2(grid):
-    visited = np.zeros_like(grid, dtype=bool)
-    visited[0, :] |= ~grid[0, :]
-    visited[-1, :] |= ~grid[-1, :]
-    visited[:, 0] |= ~grid[:, 0]
-    visited[:, -1] |= ~grid[:, -1]
-
-
-    struct = np.array([[0,1,0],
-                       [1,1,1],
-                       [0,1,0]], dtype=bool)
-
-    k = 0
-    while True:
-        k+=1
-        prev = visited
-        visited = binary_dilation(visited, structure=struct, mask=~grid)
-        print(f"flood iteration {k}")
-        if np.array_equal(visited, prev):
-            break
-
-    return visited
-
 
 def flood4(grid):
     h, w = grid.shape
