@@ -105,6 +105,7 @@ def flood4(grid):
 
     return visited
 
+
 def make_table(points):
     segments = connect_points(points)
     min_x, max_x, min_y, max_y = min_max(list(segments))
@@ -155,6 +156,8 @@ def main():
             print(r)
             break
 
+    #(928735592, (3268, 60481), (94651, 50319))
+    #Largest value: (928735592, (3268, 60481), (94651, 50319))
     print("Largest value:", r)
 
 
